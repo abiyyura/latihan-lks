@@ -20,7 +20,7 @@ class AuthController extends Controller
                 'bio' => 'required|max:100',
                 'username' => 'required|unique:users,username|min:3|regex:/^[a-zA-Z0-9._]+$/', // Memperbaiki regex dan unique
                 'password' => 'required|min:6',
-                'is_private' => 'boolean',
+                'is_private' => 'required',
             ]);
 
             // Buat pengguna baru
@@ -29,14 +29,14 @@ class AuthController extends Controller
                 'bio' => $data['bio'],
                 'username' => $data['username'],
                 'password' => Hash::make($data['password']),
-                'is_private' => $data['is_private'] ?? false, // Default ke false jika tidak disediakan
+                'is_private' => $data['is_private'] ?? false, 
             ]);
 
             // Buat token API
-            $token = $user->createToken('authToken')->plainTextToken;
+            $token['token']= $user->createToken('authToken')->plainTextToken;
 
             return response()->json([
-                'message' => 'Register success', // Memperbaiki pengetikan
+                'message' => 'Register success', 
                 'token' => $token,
                 'user' => [
                     'full_name' => $user->full_name,
@@ -44,7 +44,7 @@ class AuthController extends Controller
                     'username' => $user->username,
                     'is_private' => (bool) $user->is_private,
                 ],
-            ], 201); // 201 artinya Created
+            ], 201); 
 
         } catch (ValidationException $e) {
             // Penanganan kesalahan validasi
@@ -54,4 +54,5 @@ class AuthController extends Controller
             ], 422); 
         }
     }
+    
 }
